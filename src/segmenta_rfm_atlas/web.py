@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import math
 from typing import Mapping
 
-from flask import Flask, render_template, request, url_for
+from flask import Flask, current_app, render_template, request, url_for
 from flask.views import MethodView
 import pandas as pd
 from pymongo import MongoClient
@@ -165,6 +165,9 @@ class SegmentView(MethodView):
                 result=None,
             ), 400
         except Exception:
+            current_app.logger.exception(
+                "Classification failed during inference or MongoDB persistence."
+            )
             return render_template(
                 "index.html",
                 values=values,
