@@ -7,7 +7,7 @@
 
 ## 2. RFM Training and Model Artifact
 
-- [ ] 2.1 Add a Python class that downloads UCI dataset 352 when needed, supports Colab manual upload after network failure, and rejects workbooks that do not contain exactly 541.909 transactions; verify with mocked download, fallback, and row-count tests without committing a workbook. The fallback test was added but still needs to run in a working Python environment.
+- [x] 2.1 Add a Python class that downloads UCI dataset 352 when needed, supports Colab manual upload after network failure, and rejects workbooks that do not contain exactly 541.909 transactions; verify with mocked download, fallback, and row-count tests without committing a workbook.
 - [x] 2.2 Implement class-based Python data preparation for customer-level recency, distinct transaction frequency, and monetary spend; document source-column, cleaning, return/currency, and reference-date rules and verify them with Python functional tests over representative fixtures.
 - [x] 2.3 Implement class-based candidate-cluster evaluation for k=2..10 using calculated inertia and silhouette, select maximum silhouette with deterministic tie-breaking, then fit the final scaler/K-Means model; verify selection and metrics with test-only fixtures.
 - [x] 2.4 Extend the serialized artifact with UCI source/hash/count, selected-k evidence, segment labels, customer counts and original-scale centroids; verify round-trip preservation and that the web loader still predicts without calling fit.
