@@ -1,0 +1,10 @@
+@startuml C4_Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+Person(student, "Estudiante", "Entrega datos RFM para obtener un segmento")
+System(atlasApp, "Segmenta RFM Atlas", "Aplicación académica Flask que clasifica datos RFM")
+System_Ext(mongo, "MongoDB Atlas", "Almacena únicamente RFM y segmento")
+System_Ext(uci, "UCI Machine Learning Repository", "Fuente oficial de Online Retail, dataset 352")
+Rel(student, atlasApp, "Envía RFM y consulta el resultado", "HTTPS")
+Rel(atlasApp, mongo, "Inserta un documento por clasificación válida", "MongoDB driver / insert_one")
+Rel(uci, atlasApp, "Proporciona el workbook para entrenamiento offline", "HTTPS")
+@enduml

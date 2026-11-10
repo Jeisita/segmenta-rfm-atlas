@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f6f2">
+  <title>Segmenta RFM | Analítica de clientes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body data-palette="a">
+  <main class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="{{ url_for('segment') }}" aria-label="Segmenta RFM, inicio">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span class="brand-name">segmenta<span>RFM</span></span>
+      </a>
+      <div class="team-signature" aria-label="Integrantes del equipo">
+        <span class="team-caption">EQUIPO</span>
+        <div class="team-members">
+          <span>Sebastián Salcedo</span>
+          <span>Ivan Guerra</span>
+          <span>Jei Ramírez</span>
+        </div>
+      </div>
+      <span class="model-badge"><span class="status-dot"></span> Modelo entrenado · K-Means</span>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow">ANÁLISIS DE CLIENTES</p>
+        <h1 id="page-title">Descubre el perfil de un cliente</h1>
+        <p class="intro">Ingresa tres datos y el modelo lo agrupará con clientes de comportamiento parecido, aprendidos del historial de compras.</p>
+      </div>
+      <div class="hero-orbit" aria-hidden="true"><span>R</span><span>F</span><span>M</span><i></i></div>
+    </section>
+
+    <section class="rfm-guide" aria-label="Qué significa RFM">
+      <article class="guide-item"><span class="guide-letter">R</span><div><strong>Recencia</strong><small>Días desde la última compra</small></div></article>
+      <article class="guide-item"><span class="guide-letter">F</span><div><strong>Frecuencia</strong><small>Número de compras</small></div></article>
+      <article class="guide-item"><span class="guide-letter">M</span><div><strong>Valor monetario</strong><small>Gasto total en libras (£)</small></div></article>
+    </section>
+
+    <section class="workspace">
+      <div class="form-panel">
+        <div class="section-heading">
+          <span class="step-number">01</span>
+          <div><h2>Datos del cliente</h2><p>Completa los tres valores para obtener su segmento.</p></div>
+        </div>
+
+        {% for message in errors %}<div class="notice error" role="alert"><span aria-hidden="true">!</span><p>{{ message }}</p></div>{% endfor %}
+        {% for message in warnings %}<div class="notice warning" role="status"><span aria-hidden="true">i</span><p>{{ message }}</p></div>{% endfor %}
+
+        <form method="post" action="{{ url_for('segment') }}">
+          <div class="field-grid">
+            <div class="field field-r">
+              <label for="recency">Recencia <span>R</span></label>
+              <div class="input-wrap"><input id="recency" name="recency" type="number" min="0" step="any" required value="{{ values.get('recency', '') }}" placeholder="Ej. 30"><span class="unit">días</span></div>
+              <small>Tiempo desde la última compra.</small>
+            </div>
+            <div class="field field-f">
+              <label for="frequency">Frecuencia <span>F</span></label>
+              <div class="input-wrap"><input id="frequency" name="frequency" type="number" min="1" step="1" required value="{{ values.get('frequency', '') }}" placeholder="Ej. 5"><span class="unit">compras</span></div>
+              <small>Compras realizadas por el cliente.</small>
+            </div>
+            <div class="field field-wide field-m">
+              <label for="monetary">Valor monetario <span>M</span></label>
+              <div class="input-wrap"><span class="unit unit-prefix">£</span><input id="monetary" name="monetary" type="number" min="0" step="any" required value="{{ values.get('monetary', '') }}" placeholder="Ej. 250"><span class="unit">GBP</span></div>
+              <small>Gasto acumulado en el conjunto de datos.</small>
+            </div>
+          </div>
+          <button type="submit"><span>Analizar perfil</span><span aria-hidden="true">→</span></button>
+        </form>
+        <p class="range-note"><span aria-hidden="true">⌁</span> Se aceptan valores dentro de los rangos usados para entrenar el modelo.</p>
+      </div>
+
+      <aside class="result-panel {% if result is not none %}has-result{% endif %}" aria-live="polite">
+        {% if result is not none %}
+          <div class="result-icon" aria-hidden="true">✓</div>
+          <p class="result-kicker">ANÁLISIS COMPLETADO</p>
+          <h2>Cliente asignado</h2>
+          <div class="segment-chip"><span>Segmento</span><strong>{{ result }}</strong></div>
+          <p class="result-copy">El modelo encontró el grupo cuyo perfil RFM es más parecido al de los datos ingresados.</p>
+          <div class="saved-note"><span class="saved-dot"></span> Predicción guardada en MongoDB Atlas</div>
+        {% else %}
+          <div class="empty-graphic" aria-hidden="true"><span>R</span><span>F</span><span>M</span><i>→</i><b>?</b></div>
+          <p class="result-kicker">RESULTADO</p>
+          <h2>Tu segmento aparecerá aquí</h2>
+          <p class="result-copy">Al enviar los datos, verás el grupo asignado y la confirmación de que se guardó la predicción.</p>
+          <div class="privacy-note"><span aria-hidden="true">◈</span><p>Solo se guardan recencia, frecuencia, gasto y segmento. No se solicita información personal.</p></div>
+        {% endif %}
+      </aside>
+    </section>
+
+    <footer class="page-footer">
+      <span>Segmentación de clientes · Modelo RFM</span>
+      <span>El número del segmento es una etiqueta del modelo, no una calificación.</span>
+    </footer>
+  </main>
+</body>
+</html>

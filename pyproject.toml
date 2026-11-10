@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "segmenta-rfm-atlas"
+version = "0.1.0"
+description = "Academic RFM segmentation with K-Means, Flask, and MongoDB Atlas."
+requires-python = ">=3.10"
+dependencies = [
+  "Flask>=3.0,<4.0",
+  "gunicorn>=22.0,<24.0",
+  "joblib>=1.3,<2.0",
+  "openpyxl>=3.1,<4.0",
+  "numpy>=1.26,<3.0",
+  "pandas>=2.1,<3.0",
+  "pymongo>=4.6,<5.0",
+  "scikit-learn>=1.4,<2.0",
+]
+
+[project.optional-dependencies]
+notebook = ["ipykernel>=6.29,<8.0", "nbformat>=5.9,<6.0"]
+notebook-ui = ["jupyterlab>=4.0,<5.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

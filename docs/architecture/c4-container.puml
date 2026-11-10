@@ -1,0 +1,16 @@
+@startuml C4_Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+Person(student, "Estudiante", "Envía las tres variables RFM")
+System_Boundary(system, "Segmenta RFM Atlas") {
+  Container(web, "Flask web app", "Python, Flask, Gunicorn", "Valida, carga el modelo y responde HTML")
+  Container(model, "Modelo entrenado", "joblib Pipeline", "StandardScaler y K-Means con rangos")
+  Container(training, "Notebook de entrenamiento", "Jupyter / Python", "Prepara RFM, entrena y exporta el artefacto")
+}
+System_Ext(mongo, "MongoDB Atlas", "Colección de inserción de clasificaciones")
+System_Ext(uci, "UCI Machine Learning Repository", "Online Retail dataset 352, 541.909 transacciones")
+Rel(student, web, "HTTPS form")
+Rel(web, model, "Carga al inicio y predice")
+Rel(training, model, "Escribe artefacto")
+Rel(uci, training, "Entrega ZIP oficial; manual upload en Colab si falla", "HTTPS")
+Rel(web, mongo, "Una inserción por predicción válida", "insert_one")
+@enduml

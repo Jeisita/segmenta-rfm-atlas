@@ -1,0 +1,74 @@
+@startuml RFM_Class_Diagram
+class RFMDataPreparer {
+  +prepare(transactions): DataFrame
+}
+class RFMModelTrainer {
+  +evaluate_cluster_candidates(rfm, candidates): DataFrame
+  +select_n_clusters(rfm, candidates): int
+  +fit(rfm): Pipeline
+  +evaluate(rfm): dict
+  +create_artifact(rfm): RFMModelArtifact
+  +save_artifact(artifact, path)
+  +load_artifact(path): RFMModelArtifact
+}
+class RFMModelArtifact {
+  +pipeline: Pipeline
+  +feature_names: tuple
+  +training_ranges: dict
+  +training_parameters: dict
+  +cluster_selection: list
+  +segment_metadata: dict
+  +dataset_metadata: dict
+  +sklearn_version: str
+}
+class OnlineRetailDatasetLoader {
+  +load(workbook_path, auto_download): DatasetLoadResult
+  +download_from_uci(workbook_path): Path
+  +upload_manual_workbook(workbook_path): Path
+  +is_google_colab(): bool
+}
+class DatasetLoadResult {
+  +transactions: DataFrame
+  +metadata: dict
+}
+class SegmentView {
+  +get()
+  +post()
+}
+class FlaskApplicationFactory {
+  +create(): Flask
+}
+class ClassificationService {
+  +classify(raw_values): ClassificationResult
+}
+class RFMInputValidator {
+  +validate(values): dict
+}
+class ModelSegmentPredictor {
+  +predict(values): int
+  +find_out_of_range(values): list
+}
+class AtlasInsertStore {
+  +insert_classification(values, segment)
+}
+class Settings {
+  +from_environment(): Settings
+  +validate_for_web()
+}
+class ClassificationResult {
+  +values: dict
+  +segment: int
+  +warnings: tuple
+}
+OnlineRetailDatasetLoader --> DatasetLoadResult : provides source data
+RFMModelTrainer --> RFMModelArtifact : creates after cluster selection
+SegmentView --> ClassificationService : delegates
+FlaskApplicationFactory --> Settings : loads runtime config
+FlaskApplicationFactory --> ClassificationService : wires services
+ClassificationService --> RFMInputValidator : validates
+ClassificationService --> ModelSegmentPredictor : range check / predict
+ClassificationService --> AtlasInsertStore : one insert
+ModelSegmentPredictor --> RFMModelArtifact : uses loaded pipeline
+Settings --> AtlasInsertStore : connection settings
+ClassificationService --> ClassificationResult : returns
+@enduml
