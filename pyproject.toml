@@ -25,6 +25,9 @@ notebook-ui = ["jupyterlab>=4.0,<5.0"]
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+segmenta_rfm_atlas = ["templates/*.html", "static/*.css"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
