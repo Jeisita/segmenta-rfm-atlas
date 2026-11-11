@@ -22,8 +22,7 @@ Configura las variables de entorno en la sesión o el gestor local de secretos. 
 
 El notebook carga el [Online Retail de UCI, dataset 352](https://archive.ics.uci.edu/dataset/352/online-retail) (541.909 transacciones). En Colab intenta descargar el archivo oficial automáticamente; si no puede, abre una carga manual para `Online Retail.xlsx`. En local, coloca ese workbook en `data/Online Retail.xlsx` o define `ONLINE_RETAIL_PATH`. En ambos casos se rechaza cualquier workbook que no tenga exactamente 541.909 filas y las columnas esperadas. El artefacto registra el origen UCI y el SHA-256 del archivo.
 
-Abre `notebooks/train_rfm_kmeans.ipynb` en un frontend Jupyter ya instalado o un IDE compatible y ejecuta las celdas en orden. Para instalar JupyterLab desde este proyecto, usa `python -m pip install -e ".[notebook,notebook-ui]"`. El código orientado a objetos evalúa k de 2 a 10 (acotado por la cantidad de clientes) mediante inertia y silhouette; elige la silhouette máxima, con desempate por el menor k. Los resultados se calculan solo al ejecutar sobre el UCI real. El artefacto `artifacts/rfm_kmeans.joblib` contiene `StandardScaler`, K-Means, rangos, parámetros, métricas de selección y metadatos por segmento (etiqueta, número de clientes y centroide RFM). El guardado final y la app rechazan artefactos sin metadatos UCI válidos. El dataset y el artefacto están excluidos de Git.
-
+Abre `notebooks/train_rfm_kmeans.ipynb` en un frontend Jupyter ya instalado o un IDE compatible y ejecuta las celdas en orden. Para instalar JupyterLab desde este proyecto, usa `python -m pip install -e ".[notebook,notebook-ui]"`. El código orientado a objetos evalúa k de 2 a 10 (acotado por la cantidad de clientes) mediante inertia y silhouette; elige la silhouette máxima, con desempate por el menor k. Los resultados se calculan solo al ejecutar sobre el UCI real. El artefacto `artifacts/rfm_kmeans.joblib` contiene `StandardScaler`, K-Means, rangos, parámetros, métricas de selección y metadatos por segmento (etiqueta, número de clientes y centroide RFM). El guardado final y la app rechazan artefactos sin metadatos UCI válidos. El dataset está excluido de Git. El artefacto entrenado `artifacts/rfm_kmeans.joblib` está incluido en el repositorio.
 ## Ejecutar la aplicación local
 
 Configura estas variables en el entorno antes de iniciar:
@@ -59,14 +58,11 @@ Las pruebas usan modelos y colecciones de prueba; no requieren credenciales ni c
 
 ## Despliegue WSGI
 
-El repositorio incluye `wsgi.py` y un `Procfile` que ejecuta Gunicorn enlazado al puerto `PORT` del proveedor. El proveedor debe usar Linux, instalar el paquete (por ejemplo, `python -m pip install .`), conservar `src/` instalando el paquete y arrancar el proceso web del `Procfile`. Antes del primer arranque:
+El repositorio incluye `wsgi.py` y un `Procfile` que ejecuta Gunicorn enlazado al puerto `PORT` del proveedor. 
 
-1. Ejecuta el notebook con el conjunto de datos y publica el artefacto `rfm_kmeans.joblib` de forma segura junto al servicio o en un almacenamiento privado montado. Configura `MODEL_PATH` con esa ruta.
-2. Configura `MONGO_URI`, `FLASK_SECRET_KEY` y, si corresponde, base y colección en la sección privada de variables de entorno/secretos del proveedor.
-3. Autoriza la IP/salida del servicio en Atlas y limita el usuario de base de datos a inserción en la colección.
-4. Inicia el despliegue y verifica la URL HTTP de la plataforma. El repositorio no contiene credenciales, artefacto de modelo, dataset ni URL de despliegue.
+El proyecto está desplegado en Render: [Abrir la aplicación](https://segmenta-rfm-atlas.onrender.com). Render inicia el servicio cuando recibe una solicitud, aunque, en el plan gratuito, puede tardar un poco si estaba inactivo.
 
-No se ha publicado un despliegue desde este repositorio. La cuenta del proveedor, las variables secretas, el acceso de red de Atlas y el artefacto entrenado son configuración/ejecución manual requerida.
+`artifacts/rfm_kmeans.joblib` es el modelo entrenado que carga la aplicación; no necesita reentrenarlo para usarla. Las credenciales de MongoDB Atlas y `FLASK_SECRET_KEY` se configuran como variables privadas en Render y no se guardan en el repositorio.
 
 ## Documentación técnica
 
